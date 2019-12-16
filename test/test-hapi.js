@@ -1,6 +1,6 @@
 const test = require('ava');
 const supertest = require('supertest');
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const Agenda = require('agenda');
 
 const agenda = new Agenda().database('mongodb://127.0.0.1/agendash-test-db', 'agendash-test-collection');
@@ -45,11 +45,15 @@ test.serial('POST /api/jobs/create should confirm the job exists', async t => {
 
   t.true('created' in res.body);
 
-  agenda._collection.count({}, null, (err, res) => {
-    t.ifError(err);
-    if (res !== 1) {
-      throw new Error('Expected one document in database');
-    }
+  await new Promise(resolve => {
+    agenda._collection.countDocuments({}, null, (err, res) => {
+      t.ifError(err);
+      if (res !== 1) {
+        throw new Error('Expected one document in database');
+      }
+
+      resolve(res);
+    });
   });
 });
 
@@ -74,7 +78,7 @@ test.serial('POST /api/jobs/delete should delete the job', async t => {
 
   t.true('deleted' in res.body);
 
-  const count = await agenda._collection.count({}, null);
+  const count = await agenda._collection.countDocuments({}, null);
   t.is(count, 0);
 });
 
@@ -99,6 +103,6 @@ test.serial('POST /api/jobs/requeue should requeue the job', async t => {
 
   t.false('newJobs' in res.body);
 
-  const count = await agenda._collection.count({}, null);
+  const count = await agenda._collection.countDocuments({}, null);
   t.is(count, 2);
 });

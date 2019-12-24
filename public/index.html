@@ -127,7 +127,7 @@
         <% if (failed) { %><span class="label label-danger">Failed</span><% } %>
       </td>
       <td>
-        <%- job.name %>
+        <% if (job.data.clientName) { %> <%- job.data.clientName + ' | ' + job.name %> <% } else { %> <%- job.name %> <% } %>
       </td>
       <td><% if (job.lastRunAt) { %><time datetime="<%- moment(job.lastRunAt).toISOString() %>"><%- moment(job.lastRunAt).fromNow() %></time><% } %></td>
       <td><% if (job.nextRunAt) { %><time datetime="<%- moment(job.nextRunAt).toISOString() %>"><%- moment(job.nextRunAt).fromNow() %></time><% } %></td>

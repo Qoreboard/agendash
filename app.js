@@ -6,6 +6,9 @@ module.exports = (agenda, options) => {
   if (!options.middleware) {
     options.middleware = 'express';
   }
+  if (!options.timezone) {
+    options.timezone = 'Etc/UTC';
+  }
 
   const agendash = require('./lib/agendash')(agenda, options);
 

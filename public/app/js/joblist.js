@@ -138,8 +138,7 @@ const jobList = Vue.component("job-list", {
                     <i v-if="job.failed" class="pill-own bg-danger pill-withoutIcon"><span>Failed</span></i>
                     <i v-if="job.running" class="pill-own bg-warning pill-withoutIcon"><span>Running</span></i>
                   </td>
-                  {{ console.log(job) }}
-                  <td class="job-name"  @click="toggleList(job)"> {{(job.job.clientName ? job.job.clientName + ' | ' : '') + job.job.name}} </td>
+                  <td class="job-name"  @click="toggleList(job)"> {{(job.job?.data?.clientName ? job.job.data.clientName + ' | ' : '') + job.job.name}} </td>
                   <td class="job-lastRunAt"  @click="toggleList(job)"> {{ formatDate(job.job.lastRunAt) }} </td>
                   <td class="job-nextRunAt"  @click="toggleList(job)"> {{ formatDate(job.job.nextRunAt) }} </td>
                   <td class="job-finishedAt"  @click="toggleList(job)"> {{ formatDate(job.job.lastFinishedAt) }} </td>

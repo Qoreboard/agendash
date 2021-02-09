@@ -1,13 +1,9 @@
 # Middlewares
 
 ## Hapi
-<<<<<<< HEAD
-Works with [Hapijs](https://hapi.dev/) >= v18
-=======
 
 Works with [Hapijs](https://hapijs.com/) >= v18
 
->>>>>>> 64ebd3202f192a8181a589e4ee07c5f688da3fae
 ### usage
 
 First install the dependencies in your app:
@@ -26,7 +22,7 @@ const Agenda = require('agenda');
 const Agendash = require('agendash');
 
 var agenda = new Agenda({
-    db: { address: '<mongoUrl>'
+    db: { address: '<mongoUrl>' }
 });
 
 const server = Hapi.server({

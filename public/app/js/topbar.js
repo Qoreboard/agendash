@@ -6,7 +6,7 @@ const topbar = Vue.component("topbar", {
     // name: '',
     limit: 15,
     skip: 0,
-    refresh: 60,
+    refresh: 5,
     // state: '',
     object: false,
     stateobject: [

@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 "use strict";
-const http = require("http");
 const Agenda = require("agenda");
 const agendash = require("../app");
-const express = require("express");
+const Hapi = require("@hapi/hapi");
 const program = require("commander");
 
 program
@@ -27,11 +26,6 @@ program
     "[optional] Page title, default Agendash",
     "Agendash"
   )
-  .option(
-    "-p, --path <path>",
-    "[optional] Path to bind Agendash to, default /",
-    "/"
-  )
   .parse(process.argv);
 
 if (!program.db) {
@@ -39,26 +33,28 @@ if (!program.db) {
   process.exit(1);
 }
 
-if (!program.path.startsWith("/")) {
-  console.error("--path must begin with /");
-  process.exit(1);
-}
+const init = async () => {
+  const server = Hapi.server({
+    port: 3002,
+    host: "localhost",
+  });
 
-const app = express();
+  const agenda = new Agenda().database(program.db, program.collection);
 
-const agenda = new Agenda().database(program.db, program.collection);
-app.use(
-  program.path,
-  agendash(agenda, {
-    title: program.title,
-  })
-);
-
-app.set("port", program.port);
-
-const server = http.createServer(app);
-server.listen(program.port, () => {
-  console.log(
-    `Agendash started http://localhost:${program.port}${program.path}`
+  await server.register(require("@hapi/inert"));
+  await server.register(
+    agendash(agenda, {
+      middleware: "hapi",
+    })
   );
+
+  await server.start();
+  console.log("Server running on %s", server.info.uri);
+};
+
+process.on("unhandledRejection", (error) => {
+  console.log(error);
+  process.exit(1);
 });
+
+init();

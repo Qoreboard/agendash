@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 "use strict";
-const http = require("http");
 const Agenda = require("agenda");
 const agendash = require("../app");
-const express = require("express");
+const Koa = require("koa");
 const program = require("commander");
 
 program
@@ -27,11 +26,6 @@ program
     "[optional] Page title, default Agendash",
     "Agendash"
   )
-  .option(
-    "-p, --path <path>",
-    "[optional] Path to bind Agendash to, default /",
-    "/"
-  )
   .parse(process.argv);
 
 if (!program.db) {
@@ -39,26 +33,24 @@ if (!program.db) {
   process.exit(1);
 }
 
-if (!program.path.startsWith("/")) {
-  console.error("--path must begin with /");
+const init = async () => {
+  const agenda = new Agenda().database(program.db, program.collection);
+
+  const app = new Koa();
+  const middlewares = agendash(agenda, {
+    middleware: "koa",
+  });
+  for (const middleware of middlewares) {
+    app.use(middleware);
+  }
+
+  await app.listen(program.port);
+  console.log("Server running on port %s", program.port);
+};
+
+process.on("unhandledRejection", (error) => {
+  console.log(error);
   process.exit(1);
-}
-
-const app = express();
-
-const agenda = new Agenda().database(program.db, program.collection);
-app.use(
-  program.path,
-  agendash(agenda, {
-    title: program.title,
-  })
-);
-
-app.set("port", program.port);
-
-const server = http.createServer(app);
-server.listen(program.port, () => {
-  console.log(
-    `Agendash started http://localhost:${program.port}${program.path}`
-  );
 });
+
+init();

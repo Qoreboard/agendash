@@ -2,7 +2,7 @@ const app = Vue.component("app", {
   data: () => ({
     jobs: [],
     overview: [],
-    refresh: 60,
+    refresh: 5,
     showDetail: false,
     pagenumber: 1,
     showConfirm: false,
@@ -122,7 +122,7 @@ const app = Vue.component("app", {
       property = "",
       limit = 15,
       skip = 0,
-      refresh = 60,
+      refresh = 5,
       state = "",
       object
     ) {
